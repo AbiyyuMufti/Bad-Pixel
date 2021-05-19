@@ -1238,6 +1238,11 @@ if __name__ == '__main__':
     mW.pushButtonAlgorithmusKorrigierenEinstellungen.clicked.connect(mW_pushButtonAlgorithmusKorrigierenEinstellungen)
     mW.checkBoxAlgorithmusFFK.clicked.connect(mW_checkBoxAlgorithmusFFK)    # statt clicked kann auch toggled verwendet werden stateChanged funktioniert nicht
 
+    def classification():
+        print("Hello")
+
+    mW.pushKlassifizieren.clicked.connect(classification)
+
     ### Flat-Field-Korrektur
     fF.radioButtonGespeicherteBilder.clicked.connect(fF_radioButtonGespeicherteBilder)
     fF.pushButtonHellAdd.clicked.connect(fF_pushButtonHellAdd)
@@ -1378,6 +1383,9 @@ if __name__ == '__main__':
             if mW.checkBoxAlgorithmusSuchen.isChecked():
                 fortschritt.textEdit.insertPlainText("Pixelfehler-Suche ist abgeschlossen.\n")
                 BAD_Ges=detection.Mapping(cfg.Global_BPM_Moving,cfg.Global_BPM_Multi,cfg.Global_BPM_Dynamik)*100 #Digital*100
+
+                # TODO: HERE IS THE BAD PIXELS MAP IN TOTAL
+
                 #BPM Speichern vill auch am Ende.
                 # Speichern.BPM_Save(BAD_Ges*150,mW.comboBoxBPMSensor.currentText()) #BPM Speichern    #Nur wenn alles gut war!  und wenn Pixel gesucht wurden.
                 Fehlerzahl=cfg.fehlerSammler["aMW"]+cfg.fehlerSammler["MPPC"]+cfg.fehlerSammler["dC"]
