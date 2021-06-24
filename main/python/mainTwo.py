@@ -121,4 +121,5 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()
 
 
-    # TODO: Create my own matrix
+    # TODO: Create my own matrix --> compare the algorithm
+
