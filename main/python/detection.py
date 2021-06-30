@@ -108,6 +108,7 @@ def bottom(x):
 
 def advancedMovingWindow(D3_Bild, Fensterbreite=6, Faktor=3): #Faktor aus Literatur= 3  (BildSerie2 70µA ist Faktor 2,5-3,5)
     Anz, hoehe, breite = np.shape(D3_Bild)
+    # hoehe, breite, Anz = np.shape(D3_Bild)
     #print(hoehe,breite)
     BPM=np.zeros((hoehe,breite))
     for i in range(Anz):

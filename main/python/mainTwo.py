@@ -85,12 +85,17 @@ def image_inpainting_navier_stroke(image, mask):
 
 
 if __name__ == '__main__':
-    image_path = r"D:\Master EU4M Semester 2\Detektor\Daten-20210518T195907Z-001\Daten\Aufnahmen zur Korrektur Panel Version 2\Serie4\Bildserie4_65kV_20uA_beta.png"
-    image_folder = r"D:\Master EU4M Semester 2\Detektor\Daten-20210518T195907Z-001\Daten\Aufnahmen zur Korrektur Panel Version 2\Serie4"
+    # image_path = r"D:\Master EU4M Semester 2\Detektor\Daten-20210518T195907Z-001\Daten\Aufnahmen zur Korrektur Panel Version 2\Serie4\Bildserie4_65kV_20uA_beta.png"
+    image_path = r"D:\BAD-PIXELS\Bildserie4_65kV_20uA_beta.png"
+    # image_path = r"../../../with_error_gray.png"
+    cv2.waitKey()
+    # image_folder = r"D:\Master EU4M Semester 2\Detektor\Daten-20210518T195907Z-001\Daten\Aufnahmen zur Korrektur Panel Version 2\Serie4"
     mittelwertBilder = 0
     image_to_show = 0
     image_to_show2 = 0
     pictures = loadImages(image_path)
+    rows, cols, anzahl, farbtiefe = imP.getAufloesungUndAnzahlUndFarbtiefe(pictures[0])
+    print(rows, cols, anzahl, farbtiefe)
     data_images = imP.importUIFunction(pictures, pMittelwert=True, pExport=False)
     mittelwertBilder = imP.importUIFunction(pImportPath=pictures, pMittelwertGesamt=True)
     orig = copy.copy(mittelwertBilder)
@@ -98,12 +103,10 @@ if __name__ == '__main__':
     image_to_show2 = copy.copy(mittelwertBilder)
     ResBPM, Counter = dt.advancedMovingWindow(data_images, 17, 3.2)
     cluster = classify_cluster(ResBPM)
-    print(len(ResBPM.nonzero()))
-    print(len(cluster.nonzero()))
 
-    # # cv2.imwrite("myBPM.png", ResBPM)
-    # cv2.namedWindow("Gefundene Pixelfehler", cv2.WINDOW_NORMAL)
-    # cv2.namedWindow("CLuster", cv2.WINDOW_NORMAL)
+    cv2.imwrite("myBPM.png", ResBPM)
+    cv2.namedWindow("Gefundene Pixelfehler", cv2.WINDOW_NORMAL)
+    cv2.namedWindow("CLuster", cv2.WINDOW_NORMAL)
 
     image_to_show = create_binary_mask_inpainting(ResBPM, image_to_show, 0)
     image_to_show2 = create_binary_mask_inpainting(cluster, image_to_show2)

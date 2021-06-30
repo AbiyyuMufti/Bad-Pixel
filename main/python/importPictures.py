@@ -186,7 +186,7 @@ def importUIFunction(pImportPath, pMittelwert = True, pExport = False, pExportPa
         return bildDaten
    
 def getAufloesungUndAnzahlUndFarbtiefe(pImportPath):
-    dateiEndung = (os.path.splitext(os.path.basename(pImportPath)) [1]).lower() # kleinschreiben, weil manche OS (Windows) Dateieindungen Groß schreiben
+    dateiEndung = (os.path.splitext(os.path.basename(pImportPath))[1]).lower() # kleinschreiben, weil manche OS (Windows) Dateieindungen Groß schreiben
     if dateiEndung == ".his":                                                       # Eine his-Datei
         fd = open(pImportPath,'rb')                                             # Das Bild öffnen im "rb"-Modus: read binary
         data = np.fromfile(fd,dtype=np.uint16, count=50)                        # Den Header 50 mal mit unsinged int 16 Bit einlesen (erste 100 Bytes)

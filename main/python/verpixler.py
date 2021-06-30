@@ -7,12 +7,12 @@ def verpixeln (D2_Bild, AnzPixel=100, lineEnable=False,Cluster=False, minAbweich
     r.seed(D2_Bild[1,1]+AnzPixel)       #Zufallsgenerator 
     BPM=np.zeros((hoehe,breite))        #Leer Bild erstellen
     for i in range(AnzPixel):           
-        x=r.randint(0,breite-1)
-        y=r.randint(0,hoehe-1)          #Zufall Position
+        x=r.randint(0, breite-1)
+        y=r.randint(0, hoehe-1)          #Zufall Position
         grey=r.randint(0,2**cfg.Farbtiefe) #Zufall Grauwert
         if(abs(D2_Bild[x,y]-grey)>2**cfg.Farbtiefe*minAbweichung/100):
-            D2_Bild[x,y]=grey           #Pixel einfügen
-            BPM[x,y]=100                #Fehler in perfekter BPM vermerken
+            D2_Bild[x,y] = grey           #Pixel einfügen
+            BPM[x,y] = 100                #Fehler in perfekter BPM vermerken
         else:
             i -=1
 
