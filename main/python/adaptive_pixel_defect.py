@@ -214,7 +214,7 @@ if __name__ == '__main__':
     # image_to_show = copy.copy(mittelwertBilder)
     # ResBPM, Counter = dt.advancedMovingWindow(data_images, 17, 3.2)
     # bpm = ResBPM
-    img = cv2.imread(r"D:\BAD-PIXELS\src\main\python\my_im.png", )
+    img = cv2.imread(r"D:\BAD-PIXELS\src\main\python\my_im.png")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     r, c = np.shape(img)
     cv2.namedWindow("im", cv2.WINDOW_NORMAL)
