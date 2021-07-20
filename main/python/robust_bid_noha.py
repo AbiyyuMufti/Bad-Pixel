@@ -31,35 +31,6 @@ F_135 = np.array([[2, 0, -1, 0, -1],
                   [-1, 0, -1, 0, 2]])
 
 
-# def moving_window(image, kernel):
-#     (iH, iW) = image.shape[:2]
-#     (kH, kW) = kernel.shape[:2]
-#
-#     pad = (kW - 1) // 2
-#     image = cv2.copyMakeBorder(image, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
-#     BMP = np.zeros((iH, iW), dtype=np.uint8)
-#
-#     for y in np.arange(pad, iH + pad):
-#         for x in np.arange(pad, iW + pad):
-#             im = copy.copy(image)
-#             # extract the ROI of the image by extracting the
-#             # *center* region of the current (x, y)-coordinates
-#             # dimensions
-#             r_x1 = y - pad
-#             r_x2 = y + pad + 1
-#             c_y1 = x - pad
-#             c_y2 = x + pad + 1
-#             roi = image[y - pad:y + pad + 1, x - pad:x + pad + 1]
-#             cv2.rectangle(im, (x - pad, y - pad), (x + pad + 1, y + pad + 1), (0, 0, 255), 3)
-#             cv2.imshow("im", im)
-#             cv2.waitKey(1)
-#
-#
-# def get_roi(x, y, image, pad):
-#     roi = image[y - pad:y + pad + 1, x - pad:x + pad + 1]
-#     return roi
-
-
 def get_omega(x, y, image, pad):
     pos = np.array([(x - pad, y - pad), (x - pad, y), (x - pad, y + pad), (x, y - pad),
               (x, y + pad), (x + pad, y - pad), (x + pad, y), (x + pad, y + pad)])
@@ -129,7 +100,7 @@ def get_non_directional_estimate(max_sec, min_sec, pix_stat):
         return -1
 
 
-def noha_robust_correction(image, bpm, M3, size=5):
+def noha_robust_correction(image, bpm, M3, size=5, bpm_hot=None, bpm_cold=None):
     (iH, iW) = image.shape[:2]
     # get response filter
     R_H = cv2.filter2D(img, cv2.CV_8U, F_H)
@@ -230,37 +201,120 @@ def noha_detector(image, size, M1, M2):
     (iH, iW) = image.shape[:2]
     pad = size-1 // 2
     BPM = np.zeros((iH, iW), dtype=np.uint8)
-    BPM_hot = np.zeros((iH, iW), dtype=np.uint8)
-    BPM_cold = np.zeros((iH, iW), dtype=np.uint8)
-    image = cv2.copyMakeBorder(image, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
-    BPM = cv2.copyMakeBorder(BPM, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
+    BPM_hot = np.zeros(np.shape(BPM), dtype=np.uint8)
+    BPM_cold = np.zeros(np.shape(BPM), dtype=np.uint8)
+    # image = cv2.copyMakeBorder(image, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
+    # BPM = cv2.copyMakeBorder(BPM, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
+    # BPM_hot = cv2.copyMakeBorder(BPM, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
+    # BPM_cold = cv2.copyMakeBorder(BPM, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
     for y in np.arange(iH):
         for x in np.arange(iW):
-            omega = get_omega(x, y, image, pad)
-            i_av, sd_max, sd_min = get_i_average_and_second_most(omega)
-            condA = check_condition_a(x, y, image, i_av, M1)
-            condB = check_condition_b(x, y, image, pad, M2)
-            if condA == 1 and condB == 1:
-                BPM_hot[y, x] = 1
-            elif condA == -1 and condB == -1:
-                BPM_cold[y, x] = 1
-    BPM = np.bitwise_or(BPM_hot, BPM_cold)
+            try:
+                omega = get_omega(x, y, image, pad)
+                i_av, sd_max, sd_min = get_i_average_and_second_most(omega)
+                condA = check_condition_a(x, y, image, i_av, M1)
+                condB = check_condition_b(x, y, image, pad, M2)
+                if condA == 1 and condB == 1:
+                    BPM_hot[y, x] = 1
+                elif condA == -1 and condB == -1:
+                    BPM_cold[y, x] = 1
+                else:
+                    BPM_hot[y, x] = 0
+            except IndexError:
+                continue
+            # cv2.imshow("bpm_hot_noha", 255*BPM_hot)
+            # cv2.imshow("bpm_cold_noha", 255*BPM_cold)
+            # cv2.waitKey(1)
+    BPM = np.array(np.logical_or(BPM_hot, BPM_cold),dtype=np.uint8)
     return BPM, BPM_hot, BPM_cold
 
 
+def detect_and_corrected(image, size, M1, M2, M3):
+    (iH, iW) = image.shape[:2]
+    pad = size-1 // 2
+    BPM = np.zeros((iH, iW), dtype=np.uint8)
+    BPM_hot = np.zeros(np.shape(BPM), dtype=np.uint8)
+    BPM_cold = np.zeros(np.shape(BPM), dtype=np.uint8)
+    # get response filter
+    R_H = cv2.filter2D(img, cv2.CV_8U, F_H)
+    # cv2.imshow("R_H", R_H)
+    R_V = cv2.filter2D(img, cv2.CV_8U, F_V)
+    # cv2.imshow("R_V", R_V)
+    R_45 = cv2.filter2D(img, cv2.CV_8U, F_45)
+    # cv2.imshow("R_45", R_45)
+    R_135 = cv2.filter2D(img, cv2.CV_8U, F_135)
+    # cv2.imshow("R_135", R_135)
+    image = cv2.copyMakeBorder(image, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
+    # bpm = cv2.copyMakeBorder(bpm, pad, pad, pad, pad, cv2.BORDER_REPLICATE)
+
+    for y in np.arange(iH):
+        for x in np.arange(iW):
+            # search bpm
+            try:
+                omega = get_omega(x, y, image, pad)
+                i_av, sd_max, sd_min = get_i_average_and_second_most(omega)
+                condA = check_condition_a(x, y, image, i_av, M1)
+                condB = check_condition_b(x, y, image, pad, M2)
+                if condA == 1 and condB == 1:
+                    BPM_hot[y, x] = 1
+                    pxl_stat = 1
+                elif condA == -1 and condB == -1:
+                    BPM_cold[y, x] = 1
+                    pxl_stat = 0
+                else:
+                    pxl_stat = -1
+                px_dir = get_direction(pxl_stat, R_H, R_V, R_45, R_135)
+                i_dir = get_directional_estimate(x, y, image, pad, px_dir)
+                i_nd = get_non_directional_estimate(sd_max, sd_min, pxl_stat)
+
+                if pxl_stat == 1:  # hot
+                    if np.all(i_dir > (1 + M3) * i_av):
+                        output = i_nd
+                    else:
+                        output = i_dir
+                    image[y, x] = output
+                elif pxl_stat == 0:  # cold
+                    if np.all(i_dir < (1 + M3) * i_av):
+                        output = i_nd
+                    else:
+                        output = i_dir
+                    image[y, x] = output
+                else:
+                    continue
+
+            except IndexError:
+                continue
+            cv2.imshow("bpm_hot_noha", 255*BPM_hot)
+            cv2.imshow("bpm_cold_noha", 255*BPM_cold)
+            cv2.imshow("corrected", image)
+            cv2.waitKey(1)
+    return image
+
+
 if __name__ == '__main__':
-    img = cv2.imread(r"/src/main/python/my_im.png")
-    res_bpm = cv2.imread(r"/src/main/python/my_bpm.png", cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread("my_im.png")
+    # res_bpm = cv2.imread(r"D:\BAD-PIXELS\src\main\python\bpm_cold_noha_m1_1_m2_1.png", cv2.IMREAD_GRAYSCALE)
+    res_bpm = cv2.imread("my_bpm.png", cv2.IMREAD_GRAYSCALE)
     toshow = res_bpm*255
     bpm = copy.copy(res_bpm)
-    #img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     cv2.imshow("orig", img)
-    #
-    # res = noha_robust_correction(img, bpm, 0.00001)
-    # cv2.imshow("result", res)
-    # cv2.waitKey()
-    noha_bpm, noha_hot, noha_cold = noha_detector(img, 5, 0.1, 1)
     cv2.imshow("bpm", toshow)
-    cv2.imshow("bpm_noha", noha_bpm)
+
+    # image = detect_and_corrected(img, 5, 0.1, 1, 1)
+    # cv2.imwrite("result_detect_and_corrected.png", image)
+
+    res = noha_robust_correction(img, bpm, 1)
+    cv2.imshow("result", res)
+    cv2.imwrite("result_robust_noha_bad.png", res)
+    cv2.waitKey()
+    noha_bpm, noha_hot, noha_cold = noha_detector(img, 5, 1, 1)
+    cv2.imshow("bpm", noha_bpm)
+    cv2.imwrite("this_bpm_noha_m1_1_m2_1.png", noha_bpm)
+    # cv2.imshow("bpm_noha", noha_bpm)
+    # cv2.imshow("bpm_hot_noha", noha_hot)
+    # cv2.imshow("bpm_cold_noha", noha_cold)
+
+    # cv2.imwrite("bpm_hot_noha_m1_1_m2_10.png", noha_hot)
+    # cv2.imwrite("bpm_cold_noha_m1_1_m2_10.png",noha_cold)
     cv2.waitKey()
     print("Finish!")

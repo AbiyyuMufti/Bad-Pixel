@@ -217,7 +217,7 @@ if __name__ == '__main__':
     img = cv2.imread(r"D:\BAD-PIXELS\src\main\python\my_im.png")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     r, c = np.shape(img)
-    cv2.namedWindow("im", cv2.WINDOW_NORMAL)
+    # cv2.namedWindow("im", cv2.WINDOW_NORMAL)
     # bpm = np.zeros((r, c), dtype=np.uint8)
     res_bpm = cv2.imread(r"D:\BAD-PIXELS\src\main\python\my_bpm.png", cv2.IMREAD_GRAYSCALE)
     toshow = res_bpm*255
@@ -230,6 +230,6 @@ if __name__ == '__main__':
         for x in range(c):
             if bpm[y, x] != 0:
                 in_a_kernel(img, bpm, x, y, 1)
-    cv2.imshow("im", img)
+    cv2.imshow("result", img)
     cv2.waitKey()
     print("Finish!")

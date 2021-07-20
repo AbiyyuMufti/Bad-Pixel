@@ -24,7 +24,7 @@ class Sketcher:
 
         if self.prev_pt and flags & cv.EVENT_FLAG_LBUTTON:
             for dst, color in zip(self.dests, self.colors_func()):
-                cv.line(dst, self.prev_pt, pt, color, 5)
+                cv.line(dst, self.prev_pt, pt, color, 1)
             self.dirty = True
             self.prev_pt = pt
             self.show()
@@ -32,7 +32,7 @@ class Sketcher:
 
 if __name__ == '__main__':
 
-    image_path = r"D:\Master EU4M Semester 2\Detektor\Daten-20210518T195907Z-001\Daten\Aufnahmen zur Korrektur Panel Version 2\Serie4\Bildserie4_65kV_20uA_beta.png"
+    image_path = r"D:\BAD-PIXELS\Bildserie4_65kV_20uA_beta.png"
     cv.namedWindow("img", cv.WINDOW_NORMAL)
     cv.namedWindow("inpaint", cv.WINDOW_NORMAL)
     img = cv.imread(image_path)
