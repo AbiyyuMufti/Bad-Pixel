@@ -5,10 +5,6 @@ import numpy as np
 
 from src.main.python import importPictures as imP
 
-from src.main.python import detection as dt
-
-from src.main.python import telemetry
-
 
 def loadImages(path):
     image_files = []
@@ -121,8 +117,8 @@ def image_inpainting_navier_stroke(image, mask):
 
 
 if __name__ == '__main__':
-    img = cv2.imread("my_im.png")
-    res_bpm = cv2.imread("my_bpm.png", cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread("../../../images/my_im.png")
+    res_bpm = cv2.imread("../../../images/my_bpm.png", cv2.IMREAD_GRAYSCALE)
     toshow = res_bpm * 255
     bpm = copy.copy(res_bpm)
     # img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
@@ -131,7 +127,7 @@ if __name__ == '__main__':
     # TODO: Classification !
     BPM = copy.copy(toshow)
     cluster = classify_cluster(res_bpm, 10)
-    cv2.imwrite("myBPM.png", res_bpm)
+    cv2.imwrite("../../../images/myBPM.png", res_bpm)
     cv2.namedWindow("Gefundene Pixelfehler")
     cv2.namedWindow("CLuster", cv2.WINDOW_NORMAL)
 
@@ -180,7 +176,3 @@ if __name__ == '__main__':
     #
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
-
-
-    # TODO: Create my own matrix --> compare the algorithm
-

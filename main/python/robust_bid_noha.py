@@ -292,9 +292,9 @@ def detect_and_corrected(image, size, M1, M2, M3):
 
 
 if __name__ == '__main__':
-    img = cv2.imread("my_im.png")
+    img = cv2.imread("../../../images/my_im.png")
     # res_bpm = cv2.imread(r"D:\BAD-PIXELS\src\main\python\bpm_cold_noha_m1_1_m2_1.png", cv2.IMREAD_GRAYSCALE)
-    res_bpm = cv2.imread("my_bpm.png", cv2.IMREAD_GRAYSCALE)
+    res_bpm = cv2.imread("../../../images/my_bpm.png", cv2.IMREAD_GRAYSCALE)
     toshow = res_bpm*255
     bpm = copy.copy(res_bpm)
     cv2.imshow("orig", img)
@@ -305,11 +305,11 @@ if __name__ == '__main__':
 
     res = noha_robust_correction(img, bpm, 1)
     cv2.imshow("result", res)
-    cv2.imwrite("result_robust_noha_bad.png", res)
+    cv2.imwrite("../../../images/result_robust_noha_bad.png", res)
     cv2.waitKey()
     noha_bpm, noha_hot, noha_cold = noha_detector(img, 5, 1, 1)
     cv2.imshow("bpm", noha_bpm)
-    cv2.imwrite("this_bpm_noha_m1_1_m2_1.png", noha_bpm)
+    cv2.imwrite("../../../images/bpm_saved/this_bpm_noha_m1_1_m2_1.png", noha_bpm)
     # cv2.imshow("bpm_noha", noha_bpm)
     # cv2.imshow("bpm_hot_noha", noha_hot)
     # cv2.imshow("bpm_cold_noha", noha_cold)
