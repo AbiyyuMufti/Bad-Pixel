@@ -32,7 +32,7 @@ class Sketcher:
 
 if __name__ == '__main__':
 
-    image_path = r"D:\BAD-PIXELS\Bildserie4_65kV_20uA_beta.png"
+    image_path = r"..\..\..\images\Bildserie4_65kV_20uA_beta.png"
     cv.namedWindow("img", cv.WINDOW_NORMAL)
     cv.namedWindow("inpaint", cv.WINDOW_NORMAL)
     img = cv.imread(image_path)

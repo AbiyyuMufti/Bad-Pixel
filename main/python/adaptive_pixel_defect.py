@@ -3,8 +3,7 @@ import timeit
 import cv2
 import numpy as np
 
-# image_path = r"zebra.png"
-image_path = r"D:\BAD-PIXELS\Bildserie4_65kV_20uA_beta.png"
+image_path = r"..\..\..\image\Bildserie4_65kV_20uA_beta.png"
 
 ifn = lambda v: v + 3  # index from negative
 ifz = lambda v: v - 3  # index from zero
